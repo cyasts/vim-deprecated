@@ -20,12 +20,17 @@ function print_logo()
     printf "${normal}"
 }
 
-# 备份旧文件
+# 备份旧版本文件
 function backup_old_version()
 {
-    echo "backup old files"
-    mv ${HOME}/.vim ${HOME}/.vim_old
-    mv ${HOME}/.vimrc ${HOME}/.vimrc_old
+    echo "backup old version"
+    if [ -d "${HOME}/.vim" ];then
+        mv ${HOME}/.vim ${HOME}/.vim_old
+    fi
+
+    if [ -f "${HOME}/.vimrc" ];then
+        mv ${HOME}/.vimrc ${HOME}/.vimrc_old
+    fi
 }
 
 # 下载vim 和 vundle插件
@@ -40,7 +45,7 @@ function download_vim_and_plug()
     git clone https://github.com/gmarik/vundle.git ${HOME}/.vim/bundle/vundle
 }
 
-# 安装插件
+# 插件管理软件BundleInstall安装插件
 function bundle_install_vim_plugin()
 {
     echo " " > ${HOME}/temp
@@ -58,14 +63,15 @@ function end_install()
 {
     rm ${HOME}/temp
     echo -e
-    echo "安装完成"
+    echo "安装已完成"
 }
 
 # 在debain发行版上安装必要软件
-function install_prepare_software_on_debain()
+function install_prepare_software_on_debian()
 {
     echo "install_prepare_software_on_debain"
     #sudo apt-fast install -y vim vim-gnome git ctags xclip astyle python-setuptools python-dev
+
     if which vim >/dev/null; then
         echo -e "vim is installed"
     else
@@ -127,6 +133,7 @@ function install_prepare_software_on_redhat()
 {
     echo "install_prepare_software_on_redhat"
     #yum install -y gcc vim git ctags xclip astyle python-setuptools python-devel
+
     if which gcc >/dev/null; then
         echo -e "gcc is installed"
     else
@@ -188,6 +195,7 @@ function install_prepare_software_on_archlinux()
 {
     echo "install_prepare_software_on_archlinux"
     #sudo pacman -S --noconfirm gcc vim git ctags xclip astyle python-setuptools python-evdev
+
     if which gcc >/dev/null; then
         echo -e "gcc is installed"
     else
@@ -238,6 +246,44 @@ function install_prepare_software_on_archlinux()
     fi
 }
 
+# 在mac发行版上安装必要软件
+function install_prepare_software_on_mac()
+{
+    echo "install_prepare_software_on_mac"
+    #brew install vim ctags git astyle
+
+    if which vim >/dev/null; then
+        echo -e "vim is installed"
+    else
+        brew install vim
+    fi
+
+    if which git >/dev/null; then
+        echo -e "git is installed"
+    else
+        brew install git
+    fi
+
+    if which ctags >/dev/null; then
+        echo -e "ctags is installed"
+    else
+        brew install ctags
+        sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
+    fi
+
+    if which astyle >/dev/null; then
+        echo -e "astyle is installed"
+    else
+        brew install astyle
+    fi
+
+    if which autopep8 >/dev/null; then
+        echo -e "autopep8 is installed"
+    else
+        sudo easy_install -ZU autopep8
+    fi
+}
+
 # 在debian系列发行版上安装vim
 function install_vim_on_debian()
 {
@@ -274,6 +320,32 @@ function install_vim_on_archlinux()
     print_logo
 }
 
+# 在mac上安装vim
+function install_vim_on_mac()
+{
+    echo "install_vim_on_mac"
+    install_prepare_software_on_mac
+    backup_old_version
+    download_vim_and_plug
+    bundle_install_vim_plugin
+    end_install
+    print_logo
+}
+
+# 获取linux包管理器类型
+function get_pkg_manage_type()
+{
+    if which apt-get > /dev/null ; then
+        echo "apt-get" # debian ubuntu系列
+    elif which yum > /dev/null ; then
+        echo "yum" # redhat centos系列
+    elif which pacman > /dev/null; then
+        echo "pacman" # archlinux系列
+    else
+        echo "invaild"
+    fi
+}
+
 # 在linux平台安装vim
 function install_vim_on_linux()
 {
@@ -297,20 +369,6 @@ function install_vim_on_linux()
 function get_platform_type()
 {
     echo $(uname)
-}
-
-# 获取linux包管理器类型
-function get_pkg_manage_type()
-{
-    if which apt-get > /dev/null ; then
-        echo "apt-get" # debian ubuntu系列
-    elif which yum > /dev/null ; then
-        echo "yum" # redhat centos系列
-    elif which pacman > /dev/null; then
-        echo "pacman" # archlinux系列
-    else
-        echo "invaild"
-    fi
 }
 
 # main函数
