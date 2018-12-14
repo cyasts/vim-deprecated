@@ -12,7 +12,15 @@
 
 `wget -qO- https://raw.githubusercontent.com/elinuxboy/vim-deprecated/master/setup.sh | sh -x`
 
-### 或者自己手动安装：(以ubuntu为例)
+### 或者用另一种方式自动安装：
+
+`wget https://raw.githubusercontent.com/elinuxboy/vim-deprecated/master/setup.sh`
+
+`chmod +x setup.sh`
+
+`./setup.sh`
+
+### 手动安装：(以ubuntu为例)
 
 1. 安装vim `sudo apt-get install vim`
 - 安装ctags：`sudo apt-get install ctags`
