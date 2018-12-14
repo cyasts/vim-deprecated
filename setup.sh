@@ -64,6 +64,7 @@ function end_install()
     rm ${HOME}/temp
     echo -e
     echo "安装已完成"
+    echo 'p.s. Follow me at https://github.com/elinuxboy/vim-deprecated.'
 }
 
 # 在debain发行版上安装必要软件
@@ -293,7 +294,7 @@ function install_vim_on_debian()
     download_vim_and_plug
     bundle_install_vim_plugin
     end_install
-    print_logo
+    #print_logo
 }
 
 # 在redhat系列发行版上安装vim
@@ -305,7 +306,7 @@ function install_vim_on_redhat()
     download_vim_and_plug
     bundle_install_vim_plugin
     end_install
-    print_logo
+    #print_logo
 }
 
 # 在archlinux系列发行版上安装vim
@@ -317,7 +318,7 @@ function install_vim_on_archlinux()
     download_vim_and_plug
     bundle_install_vim_plugin
     end_install
-    print_logo
+    #print_logo
 }
 
 # 在mac上安装vim
@@ -329,7 +330,7 @@ function install_vim_on_mac()
     download_vim_and_plug
     bundle_install_vim_plugin
     end_install
-    print_logo
+    #print_logo
 }
 
 # 获取linux包管理器类型
