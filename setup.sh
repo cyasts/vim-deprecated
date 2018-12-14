@@ -21,7 +21,7 @@ function print_logo()
 }
 
 # 备份旧文件
-function backup_old_files()
+function backup_old_version()
 {
     echo "backup old files"
     mv ${HOME}/.vim ${HOME}/.vim_old
@@ -32,7 +32,7 @@ function backup_old_files()
 function download_vim_and_plug()
 {
     echo "download vim-deprecated"
-    git clone git@github.com:elinuxboy/vim-deprecated.git ${HOME}/.vim
+    git clone https://github.com/elinuxboy/vim-deprecated.git ${HOME}/.vim
 
     cp ${HOME}/.vim/.vimrc ${HOME}/
 
@@ -61,7 +61,137 @@ function end_install()
     echo "安装完成"
 }
 
-# 安装archlinux发行版必要软件
+# 完成安装
+function end_install()
+{
+    rm ${HOME}/temp
+    echo -e
+    echo "安装完成"
+}
+
+# 在debain发行版上安装必要软件
+function install_prepare_software_on_debain()
+{
+    echo "install_prepare_software_on_debain"
+    #sudo apt-fast install -y vim vim-gnome git ctags xclip astyle python-setuptools python-dev
+    if which vim >/dev/null; then
+        echo -e "vim is installed"
+    else
+        sudo apt-get install -y vim
+    fi
+
+    if which vim-gnome >/dev/null; then
+        echo -e "vim-gnome is installed"
+    else
+        sudo apt-get install -y vim-gnome
+    fi
+
+    if which git >/dev/null; then
+        echo -e "git is installed"
+    else
+        sudo apt-get install -y git
+    fi
+
+    if which ctags >/dev/null; then
+        echo -e "ctags is installed"
+    else
+        sudo apt-get install -y ctags
+        sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
+    fi
+
+    if which xclip >/dev/null; then
+        echo -e "xclip is installed"
+    else
+        sudo apt-get install -y xclip
+    fi
+
+    if which astyle >/dev/null; then
+        echo -e "astyle is installed"
+    else
+        sudo apt-get install -y astyle
+    fi
+
+    if pacman -Qi python-setuptools >/dev/null; then
+        echo -e "python-setuptools is installed"
+    else
+        sudo apt-get install -y python-setuptools
+    fi
+
+    if pacman -Qi python-dev >/dev/null; then
+        echo -e "python-dev is installed"
+    else
+        sudo apt-get install -y python-dev
+    fi
+
+    if which autopep8 >/dev/null; then
+        echo -e "autopep8 is installed"
+    else
+        sudo easy_install -ZU autopep8
+    fi
+}
+
+# 在redhat发行版上安装必要软件
+function install_prepare_software_on_redhat()
+{
+    echo "install_prepare_software_on_redhat"
+    #yum install -y gcc vim git ctags xclip astyle python-setuptools python-devel
+    if which gcc >/dev/null; then
+        echo -e "gcc is installed"
+    else
+        sudo yum install -y gcc
+    fi
+
+    if which vim >/dev/null; then
+        echo -e "vim is installed"
+    else
+        sudo yum install -y vim
+    fi
+
+    if which git >/dev/null; then
+        echo -e "git is installed"
+    else
+        sudo yum install -y git
+    fi
+
+    if which ctags >/dev/null; then
+        echo -e "ctags is installed"
+    else
+        sudo yum install -y ctags
+        sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
+    fi
+
+    if which xclip >/dev/null; then
+        echo -e "xclip is installed"
+    else
+        sudo yum install -y xclip
+    fi
+
+    if which astyle >/dev/null; then
+        echo -e "astyle is installed"
+    else
+        sudo yum install -y astyle
+    fi
+
+    if pacman -Qi python-setuptools >/dev/null; then
+        echo -e "python-setuptools is installed"
+    else
+        sudo yum install -y python-setuptools
+    fi
+
+    if pacman -Qi python-devel >/dev/null; then
+        echo -e "python-devel is installed"
+    else
+        sudo yum install -y python-devel
+    fi
+
+    if which autopep8 >/dev/null; then
+        echo -e "autopep8 is installed"
+    else
+        sudo easy_install -ZU autopep8
+    fi
+}
+
+# 在archlinux发行版上安装必要软件
 function install_prepare_software_on_archlinux()
 {
     echo "install_prepare_software_on_archlinux"
@@ -116,41 +246,58 @@ function install_prepare_software_on_archlinux()
     fi
 }
 
-# 在archlinux上开始安装vim
-function begin_install_vim_on_archlinux()
+# 在debian系列发行版上安装vim
+function install_vim_on_debian()
 {
-    echo "begin_install_vim_on_archlinux"
-    backup_old_files
+    echo "install_vim_on_debian"
+    install_prepare_software_on_debian
+    backup_old_version
     download_vim_and_plug
     bundle_install_vim_plugin
     end_install
     print_logo
 }
 
-# 在archlinux发行版安装vim
+# 在redhat系列发行版上安装vim
+function install_vim_on_redhat()
+{
+    echo "install_vim_on_redhat"
+    install_prepare_software_on_redhat
+    backup_old_version
+    download_vim_and_plug
+    bundle_install_vim_plugin
+    end_install
+    print_logo
+}
+
+# 在archlinux系列发行版上安装vim
 function install_vim_on_archlinux()
 {
     echo "install_vim_on_archlinux"
     install_prepare_software_on_archlinux
-    begin_install_vim_on_archlinux
+    backup_old_version
+    download_vim_and_plug
+    bundle_install_vim_plugin
+    end_install
+    print_logo
 }
 
 # 在linux平台安装vim
 function install_vim_on_linux()
 {
-    type=`get_linux_platform_type`
-    echo "linux platform type: "${type}
+    type=`get_pkg_manage_type`
+    echo "linux pkg manage type: "${type}
 
     echo "install_vim_on_linux"
 
-    if [ ${type} == "debain" ]; then
-        install_vim_on_ubuntu
-    elif [ ${type} == "redhat" ]; then
-        install_vim_on_centos
-    elif [ ${type} == "archlinux" ]; then
+    if [ ${type} == "apt-get" ]; then
+        install_vim_on_debian
+    elif [ ${type} == "yum" ]; then
+        install_vim_on_redhat
+    elif [ ${type} == "pacman" ]; then
         install_vim_on_archlinux
     else
-        echo "not support this linux platform type: "${type}
+        echo "not support this pkg manage type: "${type}
     fi
 }
 
@@ -160,15 +307,15 @@ function get_platform_type()
     echo $(uname)
 }
 
-# 获取linux平台类型
-function get_linux_platform_type()
+# 获取linux包管理器类型
+function get_pkg_manage_type()
 {
-    if which apt-fast > /dev/null ; then
-        echo "debian" # debian ubuntu系列
+    if which apt-get > /dev/null ; then
+        echo "apt-get" # debian ubuntu系列
     elif which yum > /dev/null ; then
-        echo "redhat" # redhat centos系列
+        echo "yum" # redhat centos系列
     elif which pacman > /dev/null; then
-        echo "archlinux" # archlinux系列
+        echo "pacman" # archlinux系列
     else
         echo "invaild"
     fi
