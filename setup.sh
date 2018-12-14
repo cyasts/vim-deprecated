@@ -25,11 +25,21 @@ function backup_old_version()
 {
     echo "backup old version"
     if [ -d "${HOME}/.vim" ];then
-        mv ${HOME}/.vim ${HOME}/.vim_old
+        if [ -d "${HOME}/.vim_old" ];then
+            echo "directory .vim_old is exist, removing"
+            rm -Rf ${HOME}/.vim_old
+        fi
+
+        mv -f ${HOME}/.vim ${HOME}/.vim_old
     fi
 
     if [ -f "${HOME}/.vimrc" ];then
-        mv ${HOME}/.vimrc ${HOME}/.vimrc_old
+        if [ -f "${HOME}/.vimrc_old" ];then
+            echo "file .vimrm is exist, removing"
+            rm -f ${HOME}/.vimrc_old
+        fi
+
+        mv -f ${HOME}/.vimrc ${HOME}/.vimrc_old
     fi
 }
 
