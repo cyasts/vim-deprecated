@@ -1,94 +1,193 @@
 #!/bin/bash
-echo "安装将花费一定时间，请耐心等待直到安装完成^_^"
-if which apt-get >/dev/null; then
-    echo "You are using apt-get tool"
-	sudo apt-get install -y vim vim-gnome ctags xclip astyle python-setuptools python-dev git
-    sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
-elif which yum >/dev/null; then
-    echo "You are using yum tool"
-	sudo yum install -y gcc vim git ctags xclip astyle python-setuptools python-devel
-    sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
-elif which brew >/dev/null;then
-    echo "You are using HomeBrew tool"
-    brew install vim ctags git astyle
-    sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
-fi
 
-if which pacman >/dev/null; then
+# 打印logo
+function print_logo()
+{
+    color="$(tput setaf 6)"
+    normal="$(tput sgr0)"
+    printf "${color}"
+    echo '        __                         '
+    echo '__   __/_/___ ___ '
+    echo '\ \ / / / __ `__ \'
+    echo ' \ V / / / / / / /  '
+    echo '  \_/_/_/ /_/ /_/  '
+    echo '                                    '
+    echo ''
+    echo ''
+    echo 'Just enjoy it!'
+    echo 'p.s. Follow me at https://github.com/elinuxboy/vim-deprecated.'
+    echo ''
+    printf "${normal}"
+}
+
+# 备份旧文件
+function backup_old_files()
+{
+    echo "backup old files"
+    mv ${HOME}/.vim ${HOME}/.vim_old
+    mv ${HOME}/.vimrc ${HOME}/.vimrc_old
+}
+
+# 下载vim 和 vundle插件
+function download_vim_and_plug()
+{
+    echo "download vim-deprecated"
+    git clone git@github.com:elinuxboy/vim-deprecated.git ${HOME}/.vim
+
+    cp ${HOME}/.vim/.vimrc ${HOME}/
+
+    echo "download vundle"
+    git clone https://github.com/gmarik/vundle.git ${HOME}/.vim/bundle/vundle
+}
+
+# 安装插件
+function bundle_install_vim_plugin()
+{
+    echo " " > ${HOME}/temp
+    echo "插件管理软件正在努力为您安装插件" >> ${HOME}/temp
+    echo " " >> ${HOME}/temp
+    echo "安装完毕将自动退出" >> ${HOME}/temp
+    echo " " >> ${HOME}/temp
+    echo "请耐心等待..." >> ${HOME}/temp
+    echo " " >> ${HOME}/temp
+    vim ${HOME}/temp -c "BundleInstall" -c "q" -c "q"
+}
+
+# 完成安装
+function end_install()
+{
+    rm ${HOME}/temp
     echo -e
-    echo "You are using pacman tool"
-    echo -e
-    #sudo pacman -S gcc vim git ctags xclip astyle python-setuptools python-evdev
+    echo "安装完成"
+}
+
+# 安装archlinux发行版必要软件
+function install_prepare_software_on_archlinux()
+{
+    echo "install_prepare_software_on_archlinux"
+    #sudo pacman -S --noconfirm gcc vim git ctags xclip astyle python-setuptools python-evdev
     if which gcc >/dev/null; then
         echo -e "gcc is installed"
     else
-        sudo pacman -S gcc
+        sudo pacman -S --noconfirm gcc
     fi
 
     if which vim >/dev/null; then
         echo -e "vim is installed"
     else
-        sudo pacman -S vim
+        sudo pacman -S --noconfirm vim
     fi
 
     if which git >/dev/null; then
         echo -e "git is installed"
     else
-        sudo pacman -S git
+        sudo pacman -S --noconfirm git
     fi
 
     if which ctags >/dev/null; then
         echo -e "ctags is installed"
     else
-        sudo pacman -S ctags
+        sudo pacman -S --noconfirm ctags
         sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
     fi
 
     if which astyle >/dev/null; then
         echo -e "astyle is installed"
     else
-        sudo pacman -S astyle
+        sudo pacman -S --noconfirm astyle
     fi
 
     if pacman -Qi python-setuptools >/dev/null; then
         echo -e "python-setuptools is installed"
     else
-        sudo pacman -S python-setuptools
+        sudo pacman -S --noconfirm python-setuptools
     fi
 
     if pacman -Qi python-evdev >/dev/null; then
         echo -e "python-evdev is installed"
     else
-        sudo pacman -S python-evdev
+        sudo pacman -S --noconfirm python-evdev
     fi
-fi
 
-#sudo easy_install -ZU autopep8
-if which autopep8 >/dev/null; then
-    echo -e "autopep8 is installed"
-else
-    sudo easy_install -ZU autopep8
-fi
+    if which autopep8 >/dev/null; then
+        echo -e "autopep8 is installed"
+    else
+        sudo easy_install -ZU autopep8
+    fi
+}
 
-#sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
+# 在archlinux上开始安装vim
+function begin_install_vim_on_archlinux()
+{
+    echo "begin_install_vim_on_archlinux"
+    backup_old_files
+    download_vim_and_plug
+    bundle_install_vim_plugin
+    end_install
+    print_logo
+}
 
-mv ~/.vim ~/.vim_old
-mv ~/.vimrc ~/.vimrc_old
+# 在archlinux发行版安装vim
+function install_vim_on_archlinux()
+{
+    echo "install_vim_on_archlinux"
+    install_prepare_software_on_archlinux
+    begin_install_vim_on_archlinux
+}
 
-cd ~/ && git clone git@github.com:elinuxboy/vim-deprecated.git ~/.vim
-cp ~/.vim/.vimrc ~/
+# 在linux平台安装vim
+function install_vim_on_linux()
+{
+    type=`get_linux_platform_type`
+    echo "linux platform type: "${type}
 
-git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+    echo "install_vim_on_linux"
 
-echo " " > ~/temp
-echo "bundle程序正在努力为您安装plugin" >> ~/temp
-echo " " >> ~/temp
-echo "安装完毕将自动退出" >> ~/temp
-echo " " >> ~/temp
-echo "请耐心等待..." >> ~/temp
-echo " " >> ~/temp
-vim ~/temp -c "BundleInstall" -c "q" -c "q"
-rm ~/temp
-echo " " >> ~/temp
-echo -e
-echo "安装完成"
+    if [ ${type} == "debain" ]; then
+        install_vim_on_ubuntu
+    elif [ ${type} == "redhat" ]; then
+        install_vim_on_centos
+    elif [ ${type} == "archlinux" ]; then
+        install_vim_on_archlinux
+    else
+        echo "not support this linux platform type: "${type}
+    fi
+}
+
+# 获取平台类型，mac还是linux平台
+function get_platform_type()
+{
+    echo $(uname)
+}
+
+# 获取linux平台类型
+function get_linux_platform_type()
+{
+    if which apt-fast > /dev/null ; then
+        echo "debian" # debian ubuntu系列
+    elif which yum > /dev/null ; then
+        echo "redhat" # redhat centos系列
+    elif which pacman > /dev/null; then
+        echo "archlinux" # archlinux系列
+    else
+        echo "invaild"
+    fi
+}
+
+# main函数
+function main()
+{
+    type=`get_platform_type`
+    echo "platform type: "${type}
+
+    if [ ${type} == "Darwin" ]; then
+        install_vim_on_mac
+    elif [ ${type} == "Linux" ]; then
+        install_vim_on_linux
+    else
+        echo "not support platform type: "${type}
+    fi
+}
+
+# 调用main函数
+main
