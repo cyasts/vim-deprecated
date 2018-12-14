@@ -61,14 +61,6 @@ function end_install()
     echo "安装完成"
 }
 
-# 完成安装
-function end_install()
-{
-    rm ${HOME}/temp
-    echo -e
-    echo "安装完成"
-}
-
 # 在debain发行版上安装必要软件
 function install_prepare_software_on_debain()
 {
